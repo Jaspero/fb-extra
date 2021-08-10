@@ -12,9 +12,12 @@ async function createUser(email, password, customClaims) {
         });
 
         if (customClaims) {
-            await admin.auth().setCustomUserClaims(user.uid, {
-                role: customClaims
-            });
+            try {
+                const json = JSON.parse(customClaims);
+                await admin.auth().setCustomUserClaims(user.uid, json);
+            } catch (error) {
+                return errorMessage('Provided invalid Custom Claims JSON!');
+            }
         }
 
         return successMessage(`Successfully created user!`);
@@ -36,9 +39,14 @@ async function updateClaims(identifier, customClaims) {
             user = await admin.auth().getUser(identifier);
         }
 
-        await admin.auth().setCustomUserClaims(user.uid, {
-            role: customClaims
-        });
+        if (customClaims) {
+            try {
+                const json = JSON.parse(customClaims);
+                await admin.auth().setCustomUserClaims(user.uid, json);
+            } catch (error) {
+                return errorMessage('Provided invalid Custom Claims JSON!');
+            }
+        }
 
         return successMessage(`Successfully updated user claims!`);
     } catch (error) {
