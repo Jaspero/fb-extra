@@ -48,6 +48,33 @@ async function init() {
             .addArgument(new Argument('[custom-claims]', 'Custom Claims'))
             .action(auth.createUser)
     );
+    commands.auth.addCommand(
+        new Command('update-claims')
+            .description('Update users custom claims.')
+            .addArgument(new Argument('<id/email>', 'ID/Email'))
+            .addArgument(new Argument('<custom-claims>', 'Custom Claims'))
+            .action(auth.updateClaims)
+    );
+    commands.auth.addCommand(
+        new Command('change-password')
+            .description('Changes the users password.')
+            .addArgument(new Argument('<id/email>', 'ID/Email'))
+            .addArgument(new Argument('<new-password>', 'New Password'))
+            .action(auth.changePassword)
+    );
+    commands.auth.addCommand(
+        new Command('remove-user')
+            .description('Removes the user by Email or ID')
+            .addArgument(new Argument('<id/email>', 'ID/Email'))
+            .action(auth.removeUser)
+    );
+    commands.auth.addCommand(
+        new Command('list-users')
+            .description('List app users.')
+            .addArgument(new Argument('[page-size]', 'Page Size').default(100))
+            .addArgument(new Argument('[page-number]', 'Page Number'))
+            .action(auth.listUsers)
+    );
 
     /**
      * UPDATE

@@ -1,13 +1,9 @@
-const {successMessage, errorMessage} = require('../utils');
+const {successMessage, errorMessage, initializeFirebase} = require('../utils');
 const admin = require('firebase-admin');
-const {config} = require('../config');
 
 async function createUser(email, password, customClaims) {
-
     try {
-        admin.initializeApp({
-            credential: admin.credential.cert(JSON.parse(config.get(`iam.${config.get('project')}`) || '{}'))
-        });
+        initializeFirebase();
 
         const user = await admin.auth().createUser({
             email,
@@ -26,6 +22,88 @@ async function createUser(email, password, customClaims) {
     }
 }
 
+async function updateClaims(identifier, customClaims) {
+    try {
+        initializeFirebase();
+
+        const isEmail = identifier.includes('@');
+
+        let user;
+        if (isEmail) {
+            user = await admin.auth().getUserByEmail(identifier);
+        } else {
+            user = await admin.auth().getUser(identifier);
+        }
+
+        await admin.auth().setCustomUserClaims(user.uid, {
+            role: customClaims
+        });
+
+        return successMessage(`Successfully updated user claims!`);
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
+async function changePassword(identifier, password) {
+    try {
+        initializeFirebase();
+
+        const isEmail = identifier.includes('@');
+
+        let user;
+        if (isEmail) {
+            user = await admin.auth().getUserByEmail(identifier);
+        } else {
+            user = await admin.auth().getUser(identifier);
+        }
+
+        await admin.auth().updateUser(user.uid, {
+            password
+        });
+
+        return successMessage(`Successfully changed password!`);
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
+async function removeUser(identifier) {
+    try {
+        initializeFirebase();
+
+        const isEmail = identifier.includes('@');
+
+        let user;
+        if (isEmail) {
+            user = await admin.auth().getUserByEmail(identifier);
+        } else {
+            user = await admin.auth().getUser(identifier);
+        }
+
+        await admin.auth().deleteUser(user.uid);
+
+        return successMessage(`Successfully removed user!`);
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
+async function listUsers(pageSize = 100, page) {
+    try {
+        initializeFirebase();
+
+        const users = await admin.auth().listUsers(pageSize, page);
+        console.table(users.users.map(user => ({uid: user.uid, email: user.email})));
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
 module.exports = {
-    createUser
+    createUser,
+    updateClaims,
+    changePassword,
+    removeUser,
+    listUsers
 }
