@@ -1,0 +1,33 @@
+{
+  "name": "@jaspero/fb-extra",
+  "version": "1.0.0",
+  "description": "Additional CLI commands for interacting with firebase.",
+  "main": "index.js",
+  "bin": {
+    "fbs": "./index.js",
+    "fb-extra": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jaspero/fb-extra.git"
+  },
+  "author": {
+    "name": "Jaspero Ltd",
+    "email": "info@jaspero.co"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Jaspero/fb-extra/issues"
+  },
+  "homepage": "https://github.com/Jaspero/fb-extra#readme",
+  "dependencies": {
+    "command-exists": "1.2.9",
+    "commander": "8.1.0",
+    "firebase-admin": "9.11.0",
+    "inquirer": "8.1.2",
+    "lowdb": "1.0.0"
+  }
+}
