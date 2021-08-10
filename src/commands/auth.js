@@ -1,5 +1,6 @@
 const {successMessage, errorMessage, initializeFirebase} = require('../utils');
 const admin = require('firebase-admin');
+const inquirer = require("inquirer");
 
 async function createUser(email, password, customClaims) {
     try {
@@ -79,6 +80,19 @@ async function removeUser(identifier) {
             user = await admin.auth().getUserByEmail(identifier);
         } else {
             user = await admin.auth().getUser(identifier);
+        }
+
+        const data = await inquirer.prompt([
+            {
+                name: 'confirm',
+                message: `Are you sure you want to remove user '${user.email}'?`,
+                type: 'confirm',
+                default: false
+            }
+        ]);
+
+        if (!data.confirm) {
+            return;
         }
 
         await admin.auth().deleteUser(user.uid);
