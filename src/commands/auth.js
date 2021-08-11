@@ -115,7 +115,7 @@ async function listUsers(pageSize = 100, page) {
     try {
         initializeFirebase();
 
-        const users = await admin.auth().listUsers(pageSize, page);
+        const users = await admin.auth().listUsers(Number(pageSize), page);
         console.table(users.users.map(user => ({uid: user.uid, email: user.email})));
     } catch (error) {
         errorMessage(`Something went wrong!\n\n${error}`);
