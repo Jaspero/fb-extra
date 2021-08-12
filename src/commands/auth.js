@@ -1,6 +1,6 @@
 const {successMessage, errorMessage, initializeFirebase} = require('../utils');
 const admin = require('firebase-admin');
-const inquirer = require("inquirer");
+const inquirer = require('inquirer');
 
 async function createUser(email, password, customClaims) {
     try {

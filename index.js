@@ -5,6 +5,7 @@ const program = new Command();
 
 const use = require('./src/commands/use');
 const auth = require('./src/commands/auth');
+const firestore = require('./src/commands/firestore');
 const update = require('./src/commands/update');
 const jsonPackage = require('./package.json');
 const {checkForUpdates, errorMessage, infoMessage} = require('./src/utils');
@@ -84,6 +85,21 @@ async function init() {
             .addArgument(new Argument('[page-size]', 'Page Size').default(100))
             .addArgument(new Argument('[page-number]', 'Page Number'))
             .action(auth.listUsers)
+    );
+
+    /**
+     * FIRESTORE
+     */
+    commands.firestore = program.command('firestore');
+    commands.firestore.description('Manage Firebase Firestore');
+    commands.firestore.helpOption(false);
+    commands.firestore.addCommand(
+        new Command('add-document')
+            .alias('ad')
+            .description('Create Document in Collection.')
+            .addArgument(new Argument('<collection>', 'Collection Name'))
+            .addArgument(new Argument('<json/path>', 'Stringified JSON or path to file'))
+            .action(firestore.addDocument)
     );
 
     /**
