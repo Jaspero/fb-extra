@@ -17,11 +17,11 @@ async function init() {
 
     const activeProject = config.get('project');
 
-    if (!activeProject && !process.argv.some(argument => argument.toLowerCase() === 'use')) {
+    if (!activeProject && !process.argv.some(argument => ['use', 'update'].includes(argument.toLowerCase()))) {
         return errorMessage(`No currently active project!\nPlease set active project via command 'use'`);
     }
 
-    if (!process.argv.some(argument => argument.toLowerCase() === 'use')) {
+    if (!process.argv.some(argument => ['use', 'update'].includes(argument.toLowerCase()))) {
         infoMessage(`Using project ${activeProject}.\n`);
     }
 
