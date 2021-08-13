@@ -36,10 +36,10 @@ async function use(arguments) {
 
         const serviceAccountPath = `service-account-key-${project}.json`;
         await execute({
-            command: `gcloud iam service-accounts keys create ${path.join(path.dirname(require.main.filename), serviceAccountPath)} --iam-account=${email}`
+            command: `gcloud iam service-accounts keys create ${serviceAccountPath} --iam-account=${email}`
         });
 
-        const serviceAccount = require(path.join(path.dirname(require.main.filename), serviceAccountPath)) || {};
+        const serviceAccount = require(`./${serviceAccountPath}`) || {};
         config.set(`iam.${project}`, JSON.stringify(serviceAccount));
         fs.unlinkSync(path.join(path.dirname(require.main.filename), serviceAccountPath));
     }
