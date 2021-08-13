@@ -114,7 +114,6 @@ async function init() {
     program.helpOption(false);
     program.version(jsonPackage.version);
     program.parse(process.argv);
-
 }
 
 init().catch(message => errorMessage(`Something went wrong!\n\n${message}`));
