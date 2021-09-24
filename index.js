@@ -33,7 +33,7 @@ async function init() {
     commands.use = program.command('use');
     commands.use.description('Manage Currently Active Project');
     commands.use.helpOption(false);
-    commands.use.action(() => use.use(program.args))
+    commands.use.action(() => use.use(program.args));
 
     /**
      * AUTH
@@ -100,6 +100,20 @@ async function init() {
             .addArgument(new Argument('<collection>', 'Collection Name'))
             .addArgument(new Argument('<json/path>', 'Stringified JSON or path to file'))
             .action(firestore.addDocument)
+    );
+
+    commands.firestore.addCommand(
+        new Command('export-collection')
+            .alias('ec')
+            .description('Export a collection to json,csv or xlsx.')
+            .addArgument(new Argument('<collection>', 'Collection Name'))
+            .addArgument(new Argument('<output>', 'File to write to'))
+            .addArgument(new Argument('[type]', 'Type json|csv|xlsx defaults to csv'))
+            .addArgument(new Argument('[query]', 'Filters for collection'))
+            .addArgument(new Argument('[sort]', 'Sort Key'))
+            .addArgument(new Argument('[sort-direction]', 'Sort direction asc|desc'))
+            .addArgument(new Argument('[limit]', 'Limit number of returned documents'))
+            .action(firestore.export)
     );
 
     /**

@@ -39,7 +39,7 @@ async function use(arguments) {
             command: `gcloud iam service-accounts keys create ${serviceAccountPath} --iam-account=${email}`
         });
 
-        const serviceAccount = require(`./${serviceAccountPath}`) || {};
+        const serviceAccount = require(path.join(process.cwd(), serviceAccountPath)) || {};
         config.set(`iam.${project}`, JSON.stringify(serviceAccount));
         fs.unlinkSync(path.join(path.dirname(require.main.filename), serviceAccountPath));
     }
@@ -51,4 +51,4 @@ async function use(arguments) {
 
 module.exports = {
     use
-}
+};
