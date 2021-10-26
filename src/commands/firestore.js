@@ -1,7 +1,7 @@
 const {successMessage, errorMessage, initializeFirebase} = require('../utils');
 const admin = require('firebase-admin');
 const {readFileSync} = require('fs');
-const {outputFile} = require('fs-extra');
+const {outputFile, readFile} = require('fs-extra');
 const {utils} = require('XLSX');
 const {Parser} = require('json2csv');
 const {join} = require('path');
@@ -79,7 +79,52 @@ async function collectionExport(
     successMessage(`Successfully exported: ${collection}`)
 }
 
+/**
+ * TODO:
+ * Support formats other then JSON
+ */
+async function collectionImport(collection, filePath, merge = true) {
+    initializeFirebase();
+
+    const colRef = admin.firestore().collection(collection);
+
+    let file;
+
+    try {
+        file = await readFile(join(process.cwd(), filePath));
+    } catch (e) {
+        errorMessage(`Failed to read file from path ${filePath}. Is this a relative path from your current working directory (because it should be)?`);
+        console.error(e);
+        return;
+    }
+
+    try {
+        file = JSON.parse(file);
+    } catch (e) {
+        errorMessage(`Failed to parse file. Is this a JSON file (because it should be)?`);
+        console.error(e);
+        return;
+    }
+
+    let counter = 0;
+
+    for (const doc of file) {
+        const {id, ...data} = doc;
+
+        if (id) {
+            await colRef.doc(id).set(data, {merge});
+        } else {
+            await colRef.add(data);
+        }
+
+        counter++;
+    }
+
+    successMessage(`Successfully added ${counter} documents to ${collection}`);
+}
+
 module.exports = {
     addDocument,
-    export: collectionExport
+    export: collectionExport,
+    collectionImport
 };

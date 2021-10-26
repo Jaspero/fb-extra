@@ -116,6 +116,18 @@ async function init() {
             .action(firestore.export)
     );
 
+    commands.firestore.addCommand(
+        new Command('import-collection')
+            .alias('ic')
+            .description('Import documents in to a collection from json.')
+            .addArgument(new Argument('<collection>', 'Collection Name'))
+            .addArgument(new Argument('<filePath>', 'Relative path to json file'))
+            .addArgument(new Argument('[merge]', 'When true documents with an id are merged with existing documents with the same id. Otherwise they override the existing ones.')
+                .default(false)
+                .argParser(v => v === 'true'))
+            .action(firestore.collectionImport)
+    );
+
     /**
      * UPDATE
      */
