@@ -29,8 +29,8 @@ async function addDocument(collection, objectPath) {
 async function collectionExport(
     collection,
     output,
-    query,
     type = 'csv',
+    query,
     sort,
     sortDirection,
     limit
