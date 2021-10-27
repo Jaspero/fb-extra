@@ -64,7 +64,8 @@ async function checkForUpdates(verbose = true) {
 
 function initializeFirebase() {
     admin.initializeApp({
-        credential: admin.credential.cert(JSON.parse(config.get(`iam.${config.get('project')}`) || '{}'))
+      credential: admin.credential.applicationDefault(),
+      projectId: config.get('project')
     });
 }
 
