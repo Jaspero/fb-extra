@@ -122,10 +122,28 @@ async function listUsers(pageSize = 100, page) {
     }
 }
 
+async function getUser(identifier) {
+    try {
+        initializeFirebase();
+
+        const isEmail = identifier.includes('@');
+
+        const user = await (
+            isEmail ?
+                admin.auth().getUserByEmail(identifier) :
+                admin.auth().getUser(identifier)
+        );
+        console.table(user);
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
 module.exports = {
     createUser,
     updateClaims,
     changePassword,
     removeUser,
-    listUsers
+    listUsers,
+    getUser,
 }

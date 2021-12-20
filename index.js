@@ -87,6 +87,14 @@ async function init() {
             .action(auth.listUsers)
     );
 
+    commands.auth.addCommand(
+        new Command('get-user')
+            .alias('gu')
+            .description('Retrieves a user by email or id')
+            .addArgument(new Argument('<id/email>', 'ID/Email'))
+            .action(auth.listUsers)
+    );
+
     /**
      * FIRESTORE
      */
