@@ -92,7 +92,7 @@ async function init() {
             .alias('gu')
             .description('Retrieves a user by email or id')
             .addArgument(new Argument('<id/email>', 'ID/Email'))
-            .action(auth.listUsers)
+            .action(auth.getUser)
     );
 
     /**
