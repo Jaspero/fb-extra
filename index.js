@@ -158,6 +158,21 @@ async function init() {
             .action(storage.exp)
     )
 
+    commands.storage.addCommand(
+        new Command('import')
+            .alias('i')
+            .description('Import files and folders.')
+            .addArgument(
+                new Argument('[folder]', 'Folder to start crawling')
+                    .default(`/`)
+            )
+            .addArgument(
+                new Argument('[bucket]', 'Name of the bucket to use')
+                    .default(`${config.get('project')}.appspot.com`)
+            )
+            .action(storage.imp)
+    )
+
     /**
      * UPDATE
      */
