@@ -6,6 +6,7 @@ const program = new Command();
 const use = require('./src/commands/use');
 const auth = require('./src/commands/auth');
 const firestore = require('./src/commands/firestore');
+const storage = require('./src/commands/storage');
 const update = require('./src/commands/update');
 const jsonPackage = require('./package.json');
 const {checkForUpdates, errorMessage, infoMessage} = require('./src/utils');
@@ -135,6 +136,27 @@ async function init() {
                 .argParser(v => v === 'true'))
             .action(firestore.collectionImport)
     );
+
+    /**
+     * STORAGE
+     */
+    commands.storage = program.command('storage');
+    commands.storage.description('Manage Firebase Storage');
+    commands.firestore.helpOption(false);
+
+    commands.storage.addCommand(
+        new Command('export')
+            .alias('e')
+            .description('Export files and folders.')
+            .addArgument(
+                new Argument('[directory]', 'When defined starts crawling from the specified prefix.')
+            )
+            .addArgument(
+                new Argument('[bucket]', 'Name of the bucket to use')
+                    .default(`${config.get('project')}.appspot.com`)
+            )
+            .action(storage.exp)
+    )
 
     /**
      * UPDATE
