@@ -126,7 +126,7 @@ async function collectionImport(collection, filePath, merge = true) {
 async function removeCollection(collection, excluded) {
     initializeFirebase();
 
-    const exclusionList = excluded.split(',');
+    const exclusionList = excluded ? excluded.split(',') : [];
     const {docs} = await admin.firestore().collection(collection).get();
 
     for (const doc of docs) {

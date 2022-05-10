@@ -133,7 +133,7 @@ async function removeUsers(excluded) {
         initializeFirebase();
         const auth = admin.auth();
         const users = await batchGet(auth);
-        const exclusionList = excluded.split(',');
+        const exclusionList = excluded ? excluded.split(',') : [];
         for (const user of users) {
 
             const excluded = exclusionList.some(item => {
