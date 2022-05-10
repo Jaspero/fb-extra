@@ -114,14 +114,17 @@ async function removeUser(identifier) {
 async function removeUsers(excluded) {
     async function batchGet(auth) {
         const users = [];
+        const results = await auth.listUsers(1000);
 
-        let pageToken = null;
+        let pageToken = results.pageToken;
 
-        do {
+        users.push(...results.users);
+
+        while (pageToken) {
             const results = await auth.listUsers(1000, pageToken);
             pageToken = results.pageToken;
             users.push(...results.users);
-        } while (pageToken)
+        }
 
         return users;
     }
