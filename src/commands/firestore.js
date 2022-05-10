@@ -123,8 +123,24 @@ async function collectionImport(collection, filePath, merge = true) {
     successMessage(`Successfully added ${counter} documents to ${collection}`);
 }
 
+async function removeCollection(collection, excluded) {
+    initializeFirebase();
+
+    const exclusionList = excluded.split(',');
+    const {docs} = await admin.firestore().collection(collection).get();
+
+    for (const doc of docs) {
+        if (!exclusionList.includes(doc.id)) {
+            continue;
+        }
+
+        await doc.ref.delete();
+    }
+}
+
 module.exports = {
     addDocument,
     export: collectionExport,
-    collectionImport
+    collectionImport,
+    removeCollection
 };

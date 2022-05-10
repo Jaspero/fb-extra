@@ -120,6 +120,15 @@ async function init() {
     );
 
     commands.firestore.addCommand(
+        new Command('remove-collection')
+            .alias('rc')
+            .description('Remove all documents from a collection.')
+            .addArgument(new Argument('<collection>', 'Collection Name'))
+            .addArgument(new Argument('[excluded]', 'A comma seperated list of IDs that should be excluded'))
+            .action(firestore.removeCollection)
+    );
+
+    commands.firestore.addCommand(
         new Command('export-collection')
             .alias('ec')
             .description('Export a collection to json,csv or xlsx.')
