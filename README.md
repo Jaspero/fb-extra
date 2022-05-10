@@ -43,6 +43,10 @@ fbs use [your-project-id]
     <td>Removes a user by email or id</td>
   </tr>
   <tr>
+    <tr>
+    <td>fbs auth (remove-users|rus) [excluded]</td>
+    <td>Removes all users except for users on the exclusion list</td>
+  </tr>
     <td>fbs auth (list-users|lu) [regex search] [page-size]</td>
     <td>Lists users in descending order. Page size defaults to 20</td>
   </tr>

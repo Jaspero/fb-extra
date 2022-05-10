@@ -111,12 +111,49 @@ async function removeUser(identifier) {
     }
 }
 
+async function removeUsers(excluded) {
+    async function batchGet(auth) {
+        const users = [];
+
+        let pageToken = null;
+
+        do {
+            const results = await auth.listUsers(1000, pageToken);
+            pageToken = results.pageToken;
+            users.push(...results.users);
+        } while (pageToken)
+
+        return users;
+    }
+
+    try {
+        initializeFirebase();
+        const auth = admin.auth();
+        const users = await batchGet(auth);
+        const exclusionList = excluded.split(',');
+        for (const user of users) {
+
+            const excluded = exclusionList.some(item => {
+                const isEmail = item.includes('@');
+                return isEmail ? user.email === item : user.uid === item;
+            });
+
+            if (excluded) {
+                continue;
+            }
+
+            await auth.deleteUser(user.uid);
+        }
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
 async function listUsers(pageSize = 100, page) {
     try {
         initializeFirebase();
-
-        const users = await admin.auth().listUsers(Number(pageSize), page);
-        console.table(users.users.map(user => ({uid: user.uid, email: user.email})));
+        const {users} = await admin.auth().listUsers(Number(pageSize), page);
+        console.table(users.map(user => ({uid: user.uid, email: user.email})));
     } catch (error) {
         errorMessage(`Something went wrong!\n\n${error}`);
     }
@@ -144,6 +181,7 @@ module.exports = {
     updateClaims,
     changePassword,
     removeUser,
+    removeUsers,
     listUsers,
     getUser,
 }

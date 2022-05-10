@@ -80,6 +80,14 @@ async function init() {
     );
 
     commands.auth.addCommand(
+        new Command('remove-users')
+            .alias('rus')
+            .description('Removes users')
+            .addArgument(new Argument('[exculded]', 'A comma seperated list of IDs or emails'))
+            .action(auth.removeUsers)
+    );
+
+    commands.auth.addCommand(
         new Command('list-users')
             .alias('lu')
             .description('List app users.')
