@@ -130,12 +130,14 @@ async function removeCollection(collection, excluded) {
     const {docs} = await admin.firestore().collection(collection).get();
 
     for (const doc of docs) {
-        if (!exclusionList.includes(doc.id)) {
+        if (exclusionList.includes(doc.id)) {
             continue;
         }
 
         await doc.ref.delete();
     }
+
+    successMessage(`Successfully removed ${collection} documents.`)
 }
 
 module.exports = {

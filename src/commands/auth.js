@@ -147,6 +147,8 @@ async function removeUsers(excluded) {
 
             await auth.deleteUser(user.uid);
         }
+
+        successMessage(`Users removed successfully!`)
     } catch (error) {
         errorMessage(`Something went wrong!\n\n${error}`);
     }
