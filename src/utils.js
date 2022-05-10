@@ -3,6 +3,7 @@ const jsonPackage = require('../package.json');
 const inquirer = require('inquirer');
 const admin = require('firebase-admin');
 const {config} = require('./config');
+const {join} = require('path');
 
 function successMessage(message) {
     return console.log('\x1b[32m%s\x1b[0m', message);
@@ -63,9 +64,15 @@ async function checkForUpdates(verbose = true) {
 }
 
 function initializeFirebase() {
+
+    const project = config.get('project');
+    const usingServiceAccount = project.includes('.json');
+
     admin.initializeApp({
-      credential: admin.credential.applicationDefault(),
-      projectId: config.get('project')
+        credential: usingServiceAccount ?
+            admin.credential.cert(join(process.cwd(), project)) :
+            admin.credential.applicationDefault(),
+        ...!usingServiceAccount && {projectId: config.get('project')}
     });
 }
 
