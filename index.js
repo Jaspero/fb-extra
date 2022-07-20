@@ -135,6 +135,7 @@ async function init() {
             .addArgument(new Argument('<collection>', 'Collection Name'))
             .addArgument(new Argument('<output>', 'File to write to'))
             .addArgument(new Argument('[type]', 'Type json|csv|xlsx defaults to csv'))
+            .addArgument(new Argument('[columns]', 'A comma separated list of columns to return, defaults to *'))
             .addArgument(new Argument('[query]', 'Filters for collection'))
             .addArgument(new Argument('[sort]', 'Sort Key'))
             .addArgument(new Argument('[sort-direction]', 'Sort direction asc|desc'))

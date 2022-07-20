@@ -30,6 +30,7 @@ async function collectionExport(
     collection,
     output,
     type = 'csv',
+    columns = '*',
     query,
     sort,
     sortDirection,
@@ -68,7 +69,7 @@ async function collectionExport(
         case 'tab':
         default:
             const json2csvParser = new Parser({
-                // fields: appliedColumns.map(({label}) => label),
+                ...columns === '*' ? {} : {fields: columns},
                 delimiter: type === 'csv' ? ',' : '  '
             });
             col = json2csvParser.parse(col);
