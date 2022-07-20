@@ -69,7 +69,7 @@ async function collectionExport(
         case 'tab':
         default:
             const json2csvParser = new Parser({
-                ...columns === '*' ? {} : {fields: columns},
+                ...columns === '*' ? {} : {fields: columns.split(',')},
                 delimiter: type === 'csv' ? ',' : '  '
             });
             col = json2csvParser.parse(col);
