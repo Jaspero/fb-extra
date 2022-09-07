@@ -23,7 +23,29 @@ async function addDocument(collection, objectPath) {
 
     initializeFirebase();
     const document = await admin.firestore().collection(collection).add(object);
-    successMessage(`Successfully added document: ${document.id}`)
+    successMessage(`Successfully added document: ${document.id}`);
+}
+
+async function duplicateDocument(originPath, destination) {
+
+    initializeFirebase();
+
+    const isDestinationCollection = destination.split('/').length % 2;
+    const fs = admin.firestore();
+    const origin = await fs.doc(originPath).get();
+    const data = origin.data();
+
+    let id;
+
+    if (isDestinationCollection) {
+        const document = await fs.collection(destination).add(data);
+        id = document.id;
+    } else {
+        await fs.doc(destination).set(data);
+        id = destination.split('/').pop();
+    }
+
+    successMessage(`Successfully added document: ${id}`);
 }
 
 async function collectionExport(
@@ -145,5 +167,6 @@ module.exports = {
     addDocument,
     export: collectionExport,
     collectionImport,
-    removeCollection
+    removeCollection,
+    duplicateDocument
 };

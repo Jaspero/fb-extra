@@ -155,6 +155,15 @@ async function init() {
             .action(firestore.collectionImport)
     );
 
+    commands.firestore.addCommand(
+        new Command('duplicate-document')
+            .alias('dd')
+            .description('Duplicate the content of one document to another.')
+            .addArgument(new Argument('<originPath>', 'Needs to point to a document'))
+            .addArgument(new Argument('<destination>', 'Can point to a document or collection. If it points to a collection a new document is created.'))
+            .action(firestore.duplicateDocument)
+    )
+
     /**
      * STORAGE
      */
