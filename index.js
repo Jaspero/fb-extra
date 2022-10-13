@@ -93,6 +93,7 @@ async function init() {
             .description('List app users.')
             .addArgument(new Argument('[page-size]', 'Page Size').default(100))
             .addArgument(new Argument('[page-number]', 'Page Number'))
+            .addArgument(new Argument('[output]', 'Send data to designated file if specified.'))
             .action(auth.listUsers)
     );
 
@@ -101,6 +102,7 @@ async function init() {
             .alias('gu')
             .description('Retrieves a user by email or id')
             .addArgument(new Argument('<id/email>', 'ID/Email'))
+            .addArgument(new Argument('[output]', 'Send data to designated file if specified.'))
             .action(auth.getUser)
     );
 

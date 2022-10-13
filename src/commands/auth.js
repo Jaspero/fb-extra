@@ -1,5 +1,7 @@
 const {successMessage, errorMessage, initializeFirebase} = require('../utils');
 const admin = require('firebase-admin');
+const {outputFile} = require('fs-extra');
+const {join} = require('path');
 const inquirer = require('inquirer');
 
 async function createUser(email, password, customClaims) {
@@ -154,17 +156,22 @@ async function removeUsers(excluded) {
     }
 }
 
-async function listUsers(pageSize = 100, page) {
+async function listUsers(pageSize = 100, page, output) {
     try {
         initializeFirebase();
         const {users} = await admin.auth().listUsers(Number(pageSize), page);
-        console.table(users.map(user => ({uid: user.uid, email: user.email})));
+
+        if (output) {
+            await outputFile(join(process.cwd(), output), JSON.stringify(users, null, 2));
+        } else {
+            console.table(users.map(user => ({uid: user.uid, email: user.email})));
+        }
     } catch (error) {
         errorMessage(`Something went wrong!\n\n${error}`);
     }
 }
 
-async function getUser(identifier) {
+async function getUser(identifier, output) {
     try {
         initializeFirebase();
 
@@ -175,7 +182,12 @@ async function getUser(identifier) {
                 admin.auth().getUserByEmail(identifier) :
                 admin.auth().getUser(identifier)
         );
-        console.table(user);
+
+        if (output) {
+            await outputFile(join(process.cwd(), output), JSON.stringify(user, null, 2));
+        } else {
+            console.table(user);
+        }
     } catch (error) {
         errorMessage(`Something went wrong!\n\n${error}`);
     }
