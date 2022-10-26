@@ -221,6 +221,7 @@ module.exports = {
     createUser,
     updateClaims,
     changePassword,
+    changeEmail,
     removeUser,
     removeUsers,
     listUsers,
