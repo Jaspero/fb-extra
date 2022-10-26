@@ -73,6 +73,15 @@ async function init() {
     );
 
     commands.auth.addCommand(
+        new Command('change-email')
+            .alias('ce')
+            .description('Changes the users email.')
+            .addArgument(new Argument('<id/email>', 'ID/Email'))
+            .addArgument(new Argument('<new-email>', 'New Email'))
+            .action(auth.changeEmail)
+    );
+
+    commands.auth.addCommand(
         new Command('remove-user')
             .alias('ru')
             .description('Removes the user by Email or ID')

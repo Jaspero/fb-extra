@@ -80,6 +80,29 @@ async function changePassword(identifier, password) {
     }
 }
 
+async function changeEmail(identifier, email) {
+    try {
+        initializeFirebase();
+
+        const isEmail = identifier.includes('@');
+
+        let user;
+        if (isEmail) {
+            user = await admin.auth().getUserByEmail(identifier);
+        } else {
+            user = await admin.auth().getUser(identifier);
+        }
+
+        await admin.auth().updateUser(user.uid, {
+            email
+        });
+
+        return successMessage(`Successfully changed email!`);
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
 async function removeUser(identifier) {
     try {
         initializeFirebase();
