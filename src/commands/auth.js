@@ -4,11 +4,12 @@ const {outputFile} = require('fs-extra');
 const {join} = require('path');
 const inquirer = require('inquirer');
 
-async function createUser(email, password, customClaims) {
+async function createUser(email, password, uid, customClaims) {
     try {
         initializeFirebase();
 
         const user = await admin.auth().createUser({
+            ...uid && {uid},
             email,
             password
         });

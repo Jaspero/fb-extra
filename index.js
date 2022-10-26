@@ -49,6 +49,7 @@ async function init() {
             .description('Create a new user.')
             .addArgument(new Argument('<email>', 'Email'))
             .addArgument(new Argument('<password>', 'Password'))
+            .addArgument(new Argument('[uid]', 'ID to set'))
             .addArgument(new Argument('[custom-claims]', 'Custom Claims'))
             .action(auth.createUser)
     );
