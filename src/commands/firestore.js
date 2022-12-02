@@ -25,8 +25,12 @@ async function addDocument(collection, objectPath) {
 
     const isDestinationCollection = collection.split('/').length % 2;
 
-    const col = admin.firestore().collection(collection);
-    const document = await (isDestinationCollection ? col.add(object) : col.doc(collection.split('/').pop()).set(object, {merge: true}));
+    const fs = admin.firestore();
+    const document = await (
+        isDestinationCollection ?
+            fs.collection(collection).add(object) :
+            fs.doc(collection).set(object, {merge: true})
+    );
     successMessage(`Successfully added document: ${document.id}`);
 }
 
