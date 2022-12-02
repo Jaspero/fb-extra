@@ -30,7 +30,7 @@ async function getDocument(path, output) {
     initializeFirebase();
     try {
         const doc = await admin.firestore().doc(path).get();
-        await outputFile(join(process.cwd(), output), doc.data());
+        await outputFile(join(process.cwd(), output), JSON.stringify(doc.data(), null, 2));
     } catch (error) {
         return errorMessage(error.toString());
     }
