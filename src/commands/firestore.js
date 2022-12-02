@@ -22,7 +22,11 @@ async function addDocument(collection, objectPath) {
     }
 
     initializeFirebase();
-    const document = await admin.firestore().collection(collection).add(object);
+
+    const isDestinationCollection = collection.split('/').length % 2;
+
+    const col = admin.firestore().collection(collection);
+    const document = await (isDestinationCollection ? col.add(object) : col.doc(collection.split('/').pop()).set(object, {merge: true}));
     successMessage(`Successfully added document: ${document.id}`);
 }
 
