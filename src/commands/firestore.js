@@ -31,7 +31,7 @@ async function addDocument(collection, objectPath) {
             fs.collection(collection).add(object) :
             fs.doc(collection).set(object, {merge: true})
     );
-    successMessage(`Successfully added document: ${document.id}`);
+    successMessage(`Successfully added document: ${document.id || collection.split('/').pop()}`);
 }
 
 async function getDocument(path, output) {
