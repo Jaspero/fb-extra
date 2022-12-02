@@ -27,6 +27,7 @@ async function addDocument(collection, objectPath) {
 }
 
 async function getDocument(path, output) {
+    initializeFirebase();
     try {
         const doc = await admin.firestore().doc(path).get();
         await outputFile(join(process.cwd(), output), doc.data());
