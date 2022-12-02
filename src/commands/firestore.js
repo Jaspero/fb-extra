@@ -26,6 +26,15 @@ async function addDocument(collection, objectPath) {
     successMessage(`Successfully added document: ${document.id}`);
 }
 
+async function getDocument(path, output) {
+    try {
+        const doc = await admin.firestore().doc(path).get();
+        await outputFile(join(process.cwd(), output), doc.data());
+    } catch (error) {
+        return errorMessage(error.toString());
+    }
+}
+
 async function duplicateDocument(originPath, destination) {
 
     initializeFirebase();
@@ -165,6 +174,7 @@ async function removeCollection(collection, excluded) {
 
 module.exports = {
     addDocument,
+    getDocument,
     export: collectionExport,
     collectionImport,
     removeCollection,

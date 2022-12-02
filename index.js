@@ -174,7 +174,16 @@ async function init() {
             .addArgument(new Argument('<originPath>', 'Needs to point to a document'))
             .addArgument(new Argument('<destination>', 'Can point to a document or collection. If it points to a collection a new document is created.'))
             .action(firestore.duplicateDocument)
-    )
+    );
+
+    commands.firestore.addCommand(
+        new Command('get-document')
+            .alias('gd')
+            .description('Download a specific document.')
+            .addArgument(new Argument('<path>', 'Needs to point to a document'))
+            .addArgument(new Argument('<output>', 'Location on file system to store the document.'))
+            .action(firestore.getDocument)
+    );
 
     /**
      * STORAGE
