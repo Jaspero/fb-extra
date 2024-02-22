@@ -217,6 +217,16 @@ async function getUser(identifier, output) {
     }
 }
 
+async function createCustomToken(uid, customClaims) {
+    try {
+        initializeFirebase();
+        const token = await admin.auth().createCustomToken(uid, customClaims ? JSON.parse(customClaims) : {});
+        return successMessage(`Generated token: ${token}`);
+    } catch (error) {
+        errorMessage(`Something went wrong!\n\n${error}`);
+    }
+}
+
 module.exports = {
     createUser,
     updateClaims,
@@ -226,4 +236,5 @@ module.exports = {
     removeUsers,
     listUsers,
     getUser,
+    createCustomToken
 }

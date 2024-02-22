@@ -116,6 +116,15 @@ async function init() {
             .action(auth.getUser)
     );
 
+    commands.auth.addCommand(
+        new Command('create-custom-token')
+        .alias('cct')
+        .description('Creates a custom auth token')
+        .addArgument(new Argument('<uid>', `UID for the token it doesn't have to be a real one.`))
+        .addArgument(new Argument('[customClames]', `Arbitrary custom clames to add to the tokne.`))
+        .action(auth.createCustomToken)
+    )
+
     /**
      * FIRESTORE
      */
