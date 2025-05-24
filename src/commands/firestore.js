@@ -241,5 +241,6 @@ module.exports = {
     export: collectionExport,
     collectionImport,
     removeCollection,
-    duplicateDocument
+    duplicateDocument,
+    collectionGroupExport
 };
