@@ -161,7 +161,7 @@ async function init() {
             .addArgument(new Argument('[sort]', 'Sort Key'))
             .addArgument(new Argument('[sort-direction]', 'Sort direction asc|desc'))
             .addArgument(new Argument('[limit]', 'Limit number of returned documents'))
-            .action(firestore.export)
+            .action(firestore.collectionGroupExport)
     );
 
     commands.firestore.addCommand(
