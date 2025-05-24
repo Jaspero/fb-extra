@@ -165,6 +165,21 @@ async function init() {
     );
 
     commands.firestore.addCommand(
+        new Command('export-collection-group')
+            .alias('ecg')
+            .description('Export a collection group to json,csv or xlsx.')
+            .addArgument(new Argument('<collection-group>', 'Collection Group Name'))
+            .addArgument(new Argument('<output>', 'File to write to'))
+            .addArgument(new Argument('[type]', 'Type json|csv|xlsx defaults to csv'))
+            .addArgument(new Argument('[columns]', 'A comma separated list of columns to return, defaults to *'))
+            .addArgument(new Argument('[query]', 'Filters for collection'))
+            .addArgument(new Argument('[sort]', 'Sort Key'))
+            .addArgument(new Argument('[sort-direction]', 'Sort direction asc|desc'))
+            .addArgument(new Argument('[limit]', 'Limit number of returned documents'))
+            .action(firestore.collectionGroupExport)
+    );
+
+    commands.firestore.addCommand(
         new Command('import-collection')
             .alias('ic')
             .description('Import documents in to a collection from json.')
