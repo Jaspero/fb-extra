@@ -86,6 +86,12 @@ async function init() {
       .description("Changes the users password.")
       .addArgument(new Argument("<id/email>", "ID/Email"))
       .addArgument(new Argument("<new-password>", "New Password"))
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
+        )
+      )
       .action(auth.changePassword)
   );
 

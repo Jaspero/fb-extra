@@ -67,24 +67,30 @@ async function updateClaims(identifier, customClaims, tenantId) {
   }
 }
 
-async function changePassword(identifier, password) {
+async function changePassword(identifier, password, tenantId) {
   try {
     initializeFirebase();
 
     const isEmail = identifier.includes("@");
 
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
     let user;
     if (isEmail) {
-      user = await admin.auth().getUserByEmail(identifier);
+      user = await auth.getUserByEmail(identifier);
     } else {
-      user = await admin.auth().getUser(identifier);
+      user = await auth.getUser(identifier);
     }
 
-    await admin.auth().updateUser(user.uid, {
+    await auth.updateUser(user.uid, {
       password,
     });
 
-    return successMessage(`Successfully changed password!`);
+    const tenantMessage = tenantId ? ` for tenant ${tenantId}` : "";
+    return successMessage(`Successfully changed password${tenantMessage}!`);
   } catch (error) {
     errorMessage(`Something went wrong!\n\n${error}`);
   }
