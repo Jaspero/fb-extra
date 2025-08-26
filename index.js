@@ -99,6 +99,15 @@ async function init() {
   );
 
   commands.auth.addCommand(
+    new Command("add-tenant")
+      .alias("at")
+      .description("Adds a user to a tenant")
+      .addArgument(new Argument("<id/email>", "ID/Email"))
+      .addArgument(new Argument("<tenant-id>", "Tenant ID"))
+      .action(auth.addTenant)
+  );
+
+  commands.auth.addCommand(
     new Command("remove-user")
       .alias("ru")
       .description("Removes the user by Email or ID")

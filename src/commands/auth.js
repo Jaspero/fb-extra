@@ -235,12 +235,49 @@ async function getUser(identifier, output) {
 async function createCustomToken(uid, customClaims) {
   try {
     initializeFirebase();
+
     const token = await admin
       .auth()
       .createCustomToken(uid, customClaims ? JSON.parse(customClaims) : {});
     return successMessage(`Generated token: ${token}`);
   } catch (error) {
-    errorMessage(`Something went wrong!\n\n${error}`);
+    errorMessage(`Something went wrong!${error}`);
+  }
+}
+
+async function addTenant(identifier, tenantId) {
+  try {
+    initializeFirebase();
+
+    const isEmail = identifier.includes("@");
+
+    // Get the user first
+    let user;
+    if (isEmail) {
+      user = await admin.auth().getUserByEmail(identifier);
+    } else {
+      user = await admin.auth().getUser(identifier);
+    }
+
+    // Get the tenant auth instance
+    const tenantAuth = admin.auth().tenantManager().authForTenant(tenantId);
+
+    // Import the user to the tenant
+    const importResult = await tenantAuth.importUsers([user]);
+
+    if (importResult.successCount === 1) {
+      return successMessage(
+        `Successfully added user ${
+          user.email || user.uid
+        } to tenant ${tenantId}!`
+      );
+    } else {
+      return errorMessage(
+        `Failed to add user to tenant. Error: ${importResult.errors[0]?.error}`
+      );
+    }
+  } catch (error) {
+    errorMessage(`Something went wrong!${error}`);
   }
 }
 
@@ -254,4 +291,5 @@ module.exports = {
   listUsers,
   getUser,
   createCustomToken,
+  addTenant,
 };
