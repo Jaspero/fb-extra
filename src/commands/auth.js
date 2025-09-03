@@ -20,8 +20,31 @@ async function createUser(email, password, uid, customClaims) {
 
     if (customClaims) {
       try {
-        const json = JSON.parse(customClaims);
-        await admin.auth().setCustomUserClaims(user.uid, json);
+        let claims = customClaims;
+        // If Commander passes an object (rare), keep it, else try to parse.
+        if (typeof claims === "string") {
+          // Trim and normalize common shell quoting issues (e.g., single quotes in PowerShell)
+          const trimmed = claims.trim();
+          let toParse = trimmed;
+          // If wrapped in single quotes, strip them
+          if ((toParse.startsWith("'") && toParse.endsWith("'")) || (toParse.startsWith('"') && toParse.endsWith('"'))) {
+            toParse = toParse.slice(1, -1);
+          }
+          // If it looks like JSON with single quotes, replace single quotes around keys/values with double quotes
+          // This is a best-effort fix for PowerShell users typing '{'role':'admin'}'
+          const maybeJsonLike = toParse.startsWith("{") && toParse.endsWith("}");
+          if (maybeJsonLike && toParse.includes("'")) {
+            // Replace only simple cases: 'key': and: 'value'
+            toParse = toParse
+              .replace(/'\s*:/g, "\":")
+              .replace(/:\s*'/g, ":\"")
+              .replace(/'\s*,/g, "\",")
+              .replace(/'\s*}/g, "\"}")
+              .replace(/{\s*'/g, "{\"");
+          }
+          claims = JSON.parse(toParse);
+        }
+        await admin.auth().setCustomUserClaims(user.uid, claims);
       } catch (error) {
         return errorMessage("Provided invalid Custom Claims JSON!");
       }
@@ -53,8 +76,25 @@ async function updateClaims(identifier, customClaims, tenantId) {
 
     if (customClaims) {
       try {
-        const json = JSON.parse(customClaims);
-        await auth.setCustomUserClaims(user.uid, json);
+        let claims = customClaims;
+        if (typeof claims === "string") {
+          const trimmed = claims.trim();
+          let toParse = trimmed;
+          if ((toParse.startsWith("'") && toParse.endsWith("'")) || (toParse.startsWith('"') && toParse.endsWith('"'))) {
+            toParse = toParse.slice(1, -1);
+          }
+          const maybeJsonLike = toParse.startsWith("{") && toParse.endsWith("}");
+          if (maybeJsonLike && toParse.includes("'")) {
+            toParse = toParse
+              .replace(/'\s*:/g, "\":")
+              .replace(/:\s*'/g, ":\"")
+              .replace(/'\s*,/g, "\",")
+              .replace(/'\s*}/g, "\"}")
+              .replace(/{\s*'/g, "{\"");
+          }
+          claims = JSON.parse(toParse);
+        }
+        await auth.setCustomUserClaims(user.uid, claims);
       } catch (error) {
         return errorMessage("Provided invalid Custom Claims JSON!");
       }

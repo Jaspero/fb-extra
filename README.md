@@ -20,7 +20,7 @@ fbs use [your-project-id]
 
 <table>
   <tr>
-    <th>Command</td>
+    <th>Command</th>
     <td>Description</td>
   </tr>
   <tr>
@@ -35,7 +35,7 @@ fbs use [your-project-id]
     <td>Update users custom claims</td>
   </tr>
   <tr>
-    <td>fbs auth (change-password|cp) {id|email} <new-password></td>
+    <td>fbs auth (change-password|cp) {id|email} {new-password}</td>
     <td>Changes the users password</td>
   </tr>
   <tr>
@@ -58,5 +58,18 @@ fbs use [your-project-id]
     <td>Creates a document in the desired collection</td>
   </tr>
 </table>
+
+## Notes on passing Custom Claims JSON
+
+- The <custom-claims> argument should be a JSON object. Example: {"role":"admin"}
+- On Windows PowerShell, single quotes can be used to avoid escaping double quotes, but PowerShell may pass them differently. This tool now accepts simple single-quoted JSON like '{'role':'admin'}'.
+- If you still see "Provided invalid Custom Claims JSON!", try one of the following depending on your shell:
+  - PowerShell:
+    - fbs auth uc user@example.com '{"role":"admin"}'
+    - fbs auth uc user@example.com '{'role':'admin'}'
+  - CMD:
+    - fbs auth uc user@example.com {"role":"admin"}
+  - Bash:
+    - fbs auth uc user@example.com '{"role":"admin"}'
 
 
