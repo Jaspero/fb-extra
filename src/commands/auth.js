@@ -27,20 +27,24 @@ async function createUser(email, password, uid, customClaims) {
           const trimmed = claims.trim();
           let toParse = trimmed;
           // If wrapped in single quotes, strip them
-          if ((toParse.startsWith("'") && toParse.endsWith("'")) || (toParse.startsWith('"') && toParse.endsWith('"'))) {
+          if (
+            (toParse.startsWith("'") && toParse.endsWith("'")) ||
+            (toParse.startsWith('"') && toParse.endsWith('"'))
+          ) {
             toParse = toParse.slice(1, -1);
           }
           // If it looks like JSON with single quotes, replace single quotes around keys/values with double quotes
           // This is a best-effort fix for PowerShell users typing '{'role':'admin'}'
-          const maybeJsonLike = toParse.startsWith("{") && toParse.endsWith("}");
+          const maybeJsonLike =
+            toParse.startsWith("{") && toParse.endsWith("}");
           if (maybeJsonLike && toParse.includes("'")) {
             // Replace only simple cases: 'key': and: 'value'
             toParse = toParse
-              .replace(/'\s*:/g, "\":")
-              .replace(/:\s*'/g, ":\"")
-              .replace(/'\s*,/g, "\",")
-              .replace(/'\s*}/g, "\"}")
-              .replace(/{\s*'/g, "{\"");
+              .replace(/'\s*:/g, '":')
+              .replace(/:\s*'/g, ':"')
+              .replace(/'\s*,/g, '",')
+              .replace(/'\s*}/g, '"}')
+              .replace(/{\s*'/g, '{"');
           }
           claims = JSON.parse(toParse);
         }
@@ -80,17 +84,21 @@ async function updateClaims(identifier, customClaims, tenantId) {
         if (typeof claims === "string") {
           const trimmed = claims.trim();
           let toParse = trimmed;
-          if ((toParse.startsWith("'") && toParse.endsWith("'")) || (toParse.startsWith('"') && toParse.endsWith('"'))) {
+          if (
+            (toParse.startsWith("'") && toParse.endsWith("'")) ||
+            (toParse.startsWith('"') && toParse.endsWith('"'))
+          ) {
             toParse = toParse.slice(1, -1);
           }
-          const maybeJsonLike = toParse.startsWith("{") && toParse.endsWith("}");
+          const maybeJsonLike =
+            toParse.startsWith("{") && toParse.endsWith("}");
           if (maybeJsonLike && toParse.includes("'")) {
             toParse = toParse
-              .replace(/'\s*:/g, "\":")
-              .replace(/:\s*'/g, ":\"")
-              .replace(/'\s*,/g, "\",")
-              .replace(/'\s*}/g, "\"}")
-              .replace(/{\s*'/g, "{\"");
+              .replace(/'\s*:/g, '":')
+              .replace(/:\s*'/g, ':"')
+              .replace(/'\s*,/g, '",')
+              .replace(/'\s*}/g, '"}')
+              .replace(/{\s*'/g, '{"');
           }
           claims = JSON.parse(toParse);
         }
@@ -255,15 +263,20 @@ async function listUsers(pageSize = 100, page, output) {
   }
 }
 
-async function getUser(identifier, output) {
+async function getUser(identifier, output, tenantId) {
   try {
     initializeFirebase();
 
     const isEmail = identifier.includes("@");
 
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
     const user = await (isEmail
-      ? admin.auth().getUserByEmail(identifier)
-      : admin.auth().getUser(identifier));
+      ? auth.getUserByEmail(identifier)
+      : auth.getUser(identifier));
 
     if (output) {
       await outputFile(

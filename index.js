@@ -151,6 +151,12 @@ async function init() {
       .addArgument(
         new Argument("[output]", "Send data to designated file if specified.")
       )
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
+        )
+      )
       .action(auth.getUser)
   );
 
