@@ -8,11 +8,16 @@ const { outputFile } = require("fs-extra");
 const { join } = require("path");
 const inquirer = require("inquirer");
 
-async function createUser(email, password, uid, customClaims) {
+async function createUser(email, password, uid, customClaims, tenantId) {
   try {
     initializeFirebase();
 
-    const user = await admin.auth().createUser({
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
+    const user = await auth.createUser({
       ...(uid && { uid }),
       email,
       password,
@@ -48,13 +53,14 @@ async function createUser(email, password, uid, customClaims) {
           }
           claims = JSON.parse(toParse);
         }
-        await admin.auth().setCustomUserClaims(user.uid, claims);
+        await auth.setCustomUserClaims(user.uid, claims);
       } catch (error) {
         return errorMessage("Provided invalid Custom Claims JSON!");
       }
     }
 
-    return successMessage(`Successfully created user!`);
+    const tenantMessage = tenantId ? ` for tenant ${tenantId}` : "";
+    return successMessage(`Successfully created user${tenantMessage}!`);
   } catch (error) {
     errorMessage(`Something went wrong!\n\n${error}`);
   }
@@ -144,40 +150,51 @@ async function changePassword(identifier, password, tenantId) {
   }
 }
 
-async function changeEmail(identifier, email) {
+async function changeEmail(identifier, email, tenantId) {
   try {
     initializeFirebase();
 
     const isEmail = identifier.includes("@");
 
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
     let user;
     if (isEmail) {
-      user = await admin.auth().getUserByEmail(identifier);
+      user = await auth.getUserByEmail(identifier);
     } else {
-      user = await admin.auth().getUser(identifier);
+      user = await auth.getUser(identifier);
     }
 
-    await admin.auth().updateUser(user.uid, {
+    await auth.updateUser(user.uid, {
       email,
     });
 
-    return successMessage(`Successfully changed email!`);
+    const tenantMessage = tenantId ? ` for tenant ${tenantId}` : "";
+    return successMessage(`Successfully changed email${tenantMessage}!`);
   } catch (error) {
     errorMessage(`Something went wrong!\n\n${error}`);
   }
 }
 
-async function removeUser(identifier) {
+async function removeUser(identifier, tenantId) {
   try {
     initializeFirebase();
 
     const isEmail = identifier.includes("@");
 
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
     let user;
     if (isEmail) {
-      user = await admin.auth().getUserByEmail(identifier);
+      user = await auth.getUserByEmail(identifier);
     } else {
-      user = await admin.auth().getUser(identifier);
+      user = await auth.getUser(identifier);
     }
 
     const data = await inquirer.prompt([
@@ -193,15 +210,16 @@ async function removeUser(identifier) {
       return;
     }
 
-    await admin.auth().deleteUser(user.uid);
+    await auth.deleteUser(user.uid);
 
-    return successMessage(`Successfully removed user!`);
+    const tenantMessage = tenantId ? ` from tenant ${tenantId}` : "";
+    return successMessage(`Successfully removed user${tenantMessage}!`);
   } catch (error) {
     errorMessage(`Something went wrong!\n\n${error}`);
   }
 }
 
-async function removeUsers(excluded) {
+async function removeUsers(excluded, tenantId) {
   async function batchGet(auth) {
     const users = [];
     const results = await auth.listUsers(1000);
@@ -221,7 +239,12 @@ async function removeUsers(excluded) {
 
   try {
     initializeFirebase();
-    const auth = admin.auth();
+
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
     const users = await batchGet(auth);
     const exclusionList = excluded ? excluded.split(",") : [];
     for (const user of users) {
@@ -237,16 +260,23 @@ async function removeUsers(excluded) {
       await auth.deleteUser(user.uid);
     }
 
-    successMessage(`Users removed successfully!`);
+    const tenantMessage = tenantId ? ` from tenant ${tenantId}` : "";
+    successMessage(`Users removed successfully${tenantMessage}!`);
   } catch (error) {
     errorMessage(`Something went wrong!\n\n${error}`);
   }
 }
 
-async function listUsers(pageSize = 100, page, output) {
+async function listUsers(pageSize = 100, page, output, tenantId) {
   try {
     initializeFirebase();
-    const { users } = await admin.auth().listUsers(Number(pageSize), page);
+
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
+    const { users } = await auth.listUsers(Number(pageSize), page);
 
     if (output) {
       await outputFile(
@@ -291,14 +321,21 @@ async function getUser(identifier, output, tenantId) {
   }
 }
 
-async function createCustomToken(uid, customClaims) {
+async function createCustomToken(uid, customClaims, tenantId) {
   try {
     initializeFirebase();
 
-    const token = await admin
-      .auth()
-      .createCustomToken(uid, customClaims ? JSON.parse(customClaims) : {});
-    return successMessage(`Generated token: ${token}`);
+    // Get auth instance, with tenant if specified
+    const auth = tenantId
+      ? admin.auth().tenantManager().authForTenant(tenantId)
+      : admin.auth();
+
+    const token = await auth.createCustomToken(
+      uid,
+      customClaims ? JSON.parse(customClaims) : {}
+    );
+    const tenantMessage = tenantId ? ` for tenant ${tenantId}` : "";
+    return successMessage(`Generated token${tenantMessage}: ${token}`);
   } catch (error) {
     errorMessage(`Something went wrong!${error}`);
   }
