@@ -62,6 +62,12 @@ async function init() {
       .addArgument(new Argument("<password>", "Password"))
       .addArgument(new Argument("[uid]", "ID to set"))
       .addArgument(new Argument("[custom-claims]", "Custom Claims"))
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
+        )
+      )
       .action(auth.createUser)
   );
 
@@ -101,6 +107,12 @@ async function init() {
       .description("Changes the users email.")
       .addArgument(new Argument("<id/email>", "ID/Email"))
       .addArgument(new Argument("<new-email>", "New Email"))
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
+        )
+      )
       .action(auth.changeEmail)
   );
 
@@ -118,6 +130,12 @@ async function init() {
       .alias("ru")
       .description("Removes the user by Email or ID")
       .addArgument(new Argument("<id/email>", "ID/Email"))
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
+        )
+      )
       .action(auth.removeUser)
   );
 
@@ -127,6 +145,12 @@ async function init() {
       .description("Removes users")
       .addArgument(
         new Argument("[exculded]", "A comma seperated list of IDs or emails")
+      )
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
+        )
       )
       .action(auth.removeUsers)
   );
@@ -139,6 +163,12 @@ async function init() {
       .addArgument(new Argument("[page-number]", "Page Number"))
       .addArgument(
         new Argument("[output]", "Send data to designated file if specified.")
+      )
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
+        )
       )
       .action(auth.listUsers)
   );
@@ -174,6 +204,12 @@ async function init() {
         new Argument(
           "[customClames]",
           `Arbitrary custom clames to add to the tokne.`
+        )
+      )
+      .addArgument(
+        new Argument(
+          "[tenant-id]",
+          "Tenant ID (optional, for multi-tenant apps)"
         )
       )
       .action(auth.createCustomToken)
